@@ -1,4 +1,6 @@
 # Markdown Links
+## Diagrama de flujo de lógica para mdLinks
+![diagrama de flujo Addy](https://user-images.githubusercontent.com/113950323/216730456-ef568473-b2ed-4cef-ab56-131dcf51fd65.png)
 
 ## Índice
 
