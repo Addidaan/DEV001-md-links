@@ -1,32 +1,7 @@
 const {
   pathExists, turnPathAbsolute, isExtensionMd, getLinks, getLinkStatus,
 } = require('./functions');
-const {
-  totalLinks,
-  uniqueLinks,
-  brokenLinks,
-} = require('./cli_stats.js');
 
-// funcion mdLinks con Angie
-// const mdLinks = (path, options) => new Promise((resolve, reject) => {
-//   if (pathExists(path)) {
-//     const pathAbsolute = turnPathAbsolute(path);
-//     if (isExtensionMd(pathAbsolute)) {
-//       getLinks(pathAbsolute).then((arrayLinks) => {
-//         if (arrayLinks.length !== 0) {
-//           resolve(arrayLinks);
-//         } else {
-//           reject(new Error('Path does not have links'));
-//         }
-//       });
-//     } else {
-//       reject(new Error('Path is not an extension file .md'));
-//     }
-//   } else {
-//     reject(new Error('Path does not exist'));
-//   }
-// });
-// console.log(mdLinks('C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplodos.md'));
 const mdLinks = (path, options) => new Promise((resolve, reject) => {
   if (!pathExists(path)) {
     reject(new Error('Path does not exist'));
@@ -40,13 +15,7 @@ const mdLinks = (path, options) => new Promise((resolve, reject) => {
       reject(new Error('Path does not have links'));
     }
     if (options.validate === false) {
-      // const stats = {
-      //   Total: totalLinks(arrayLinks),
-      //   Unique: uniqueLinks(arrayLinks),
-      //   Broken: brokenLinks(arrayLinks),
-      // };
       resolve(arrayLinks);
-      // resolve(stats);
     }
     getLinkStatus(arrayLinks).then((response) => {
       resolve(response);

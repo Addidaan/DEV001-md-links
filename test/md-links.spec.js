@@ -6,15 +6,14 @@ const {
   isExtensionMd,
   readFiles,
   getLinks,
+  getLinkStatus,
 } = require('../functions');
 const { mdLinks } = require('../index');
 
 // ----------------------------TESTS DE MDLINKS/INDEX.JS-------------------------------------------
 // Test de cuando NO existe la ruta
 describe('mdLinks', () => {
-  it('Debe rechazar cuando el path no exixte', async () =>
-    expect(mdLinks('/path/noexiste.md', { validate: false })).rejects.toStrictEqual(new Error('Path does not exist'))
-  );
+  it('Debe rechazar cuando el path no exixte', async () => expect(mdLinks('/path/noexiste.md', { validate: false })).rejects.toStrictEqual(new Error('Path does not exist')));
 });
 
 // Test sobre el reject : error no es md
@@ -119,7 +118,8 @@ describe('isExtensionMd : El archivo NO tiene extension md', () => {
 });
 // Test readfiles de si esta leyendo el archivo
 // describe('readFiles', () => {
-//   it('Resuelve LEYENDO el archivo', async () => readFiles('./prueba/ejemplosinlinks.md').then((value) => {
+//   it('Resuelve LEYENDO el archivo', async () => readFiles('./prueba/ejemplosinlinks.md')
+// .then((value) => {
 //    console.log(value)
 //     expect(value).toEqual(
 //       'Hola este es un ejemplo sin links',
@@ -140,7 +140,16 @@ test('getLinks', () => getLinks('C:/Users/adria/Desktop/Laboratoria/DEV001-md-li
   .then((data) => expect(data).toEqual(array)));
 
 // Test de getLinkStatus
-// test("getLinkStatus", () =>
-//   getLinkStatus(
-//    'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md'
-//   ).then((data) => expect(data).toEqual(array)));
+// test('getLinkStatus', () => getLinkStatus(
+//   'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+// ).then((data) => expect(data).toEqual(
+//   [
+//     {
+//       href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+//       text: 'description',
+//       file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
+//       status: 200,
+//       message: 'ok',
+//     },
+//   ],
+// )));

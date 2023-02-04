@@ -60,7 +60,7 @@ const getLinkStatus = (urls) => Promise.all(urls.map((link) => axios.get(link.hr
   // console.log(error.response.status);
 // getLinkStatus(array).then((resolve) => console.log((resolve)));
 
-// Practica de función para guardar los links en un array
+// Función para guardar los links en un array (practicando)
 const createArray = (route) => {
   const mdArray = [];
   if (isExtensionMd(route)) {
@@ -79,16 +79,3 @@ module.exports = {
   getLinks,
   getLinkStatus,
 };
-
-// /\[.*\]\(.*\)/g
-
-// const readFiles = (route) => fs.readFileSync(route, 'utf-8');
-
-// const isExtensionMd = (route) => path.extname(route) === '.md';
-// const getLinks = (route) => {
-//   const urlLinks = /\[(.+?)\]\((https?:\/\/[^\s]+)\)/g;
-//   if (isExtensionMd(route)) {
-//     return readFiles(route).match(urlLinks);
-//   }
-//   return [];
-// };
