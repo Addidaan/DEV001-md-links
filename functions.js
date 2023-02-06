@@ -52,6 +52,7 @@ const array = [
     file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
   },
 ];
+
 const getLinkStatus = (urls) => Promise.all(urls.map((link) => axios.get(link.href)
   .then((respuesta) => ({ ...link, status: respuesta.status, message: 'ok' }))
   // console.log(respuesta);
