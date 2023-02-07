@@ -45,30 +45,46 @@ const getLinks = (route) => new Promise((resolve, reject) => {
 // .then((res) => console.log('este es de aqui', res));
 
 // Función para validar links con axios
-const array = [
-  {
-    href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
-    text: 'description',
-    file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
-  },
-];
+// const array = [
+//   {
+//     href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+//     text: 'description',
+//     file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
+//   },
+// ];
 
 const getLinkStatus = (urls) => Promise.all(urls.map((link) => axios.get(link.href)
   .then((respuesta) => ({ ...link, status: respuesta.status, message: 'ok' }))
   // console.log(respuesta);
 
-  .catch((error) => ({ ...link, status: error.response.status, message: 'Fail' }))));
+  .catch((error) => { // handle error
+    let errorStatus;
+    if (error.response) {
+      // La respuesta fue hecha y el servidor respondió con un código de estado
+      // que esta fuera del rango de 2xx
+      errorStatus = error.response.status;
+    } else if (error.request) {
+      // La petición fue hecha pero no se recibió respuesta
+      errorStatus = 500;
+    } else {
+      // Algo paso al preparar la petición que lanzo un Error
+      errorStatus = 400;
+    }
+    // console.log('errorStatus', errorStatus);
+    return { ...link, status: errorStatus, message: 'fail' };
+  })));
+// ({ ...link, status: error.response.status, message: 'Fail' }))));
   // console.log(error.response.status);
 // getLinkStatus(array).then((resolve) => console.log((resolve)));
 
 // Función para guardar los links en un array (practicando)
-const createArray = (route) => {
-  const mdArray = [];
-  if (isExtensionMd(route)) {
-    mdArray.push(route);
-  }
-  return mdArray;
-};
+// const createArray = (route) => {
+//   const mdArray = [];
+//   if (isExtensionMd(route)) {
+//     mdArray.push(route);
+//   }
+//   return mdArray;
+// };
 
 module.exports = {
   pathExists,
@@ -76,7 +92,6 @@ module.exports = {
   turnPathAbsolute,
   isExtensionMd,
   readFiles,
-  createArray,
   getLinks,
   getLinkStatus,
 };

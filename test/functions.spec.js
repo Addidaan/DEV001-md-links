@@ -1,12 +1,17 @@
+/* eslint-disable no-undef */
+const { default: axios } = require('axios');
 const {
   pathIsAbsolute,
   pathExists,
   turnPathAbsolute,
   isExtensionMd,
-  readFiles,
   getLinks,
   getLinkStatus,
 } = require('../functions');
+
+const { totalLinks, uniqueLinks, brokenLinks } = require('../cli_stats');
+
+jest.mock('axios');
 
 // -------------------------------TESTS DE FUNCTIONS.JS--------------------------------------------
 const absolutePathMd = 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md';
@@ -14,6 +19,7 @@ const noExisteRuta = 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/
 const relativePath = 'prueba/ejemplo.md';
 const absolutePathInvert = 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md';
 const htmlPath = './prueba/ejemplo.html';
+const noLinks = './prueba/ejemplosinlinks.md';
 
 // Test cuando SI existe la ruta
 describe('pathExists: cuando SI existe RUTA', () => {
@@ -67,16 +73,6 @@ describe('isExtensionMd : El archivo NO tiene extension md', () => {
     expect(isExtensionMd(htmlPath)).toEqual(false);
   });
 });
-// Test readfiles de si esta leyendo el archivo
-// describe('readFiles', () => {
-//   it('Resuelve LEYENDO el archivo', async () => readFiles('./prueba/ejemplosinlinks.md')
-// .then((value) => {
-//    console.log(value)
-//     expect(value).toEqual(
-//       'Hola este es un ejemplo sin links',
-//     );
-//   }).catch(console.log));
-// });
 
 // Test getLinks
 const array = [
@@ -85,23 +81,182 @@ const array = [
     text: 'description',
     file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
   },
+  {
+    href: 'https://nodejs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+  {
+    href: 'https://developers.google.com/v8/',
+    text: 'motor de JavaScript V8 de Chrome',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
 ];
 
-test('getLinks', () => getLinks(
-  'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
-).then((data) => expect(data).toEqual(array)));
+test('getLinks muestra links cuando encuentra', () => getLinks(absolutePathMd).then((data) => expect(data).toEqual(array)));
+test('getLinks muestra ERROr cuando no tiene links', () => getLinks(noLinks).catch((error) => expect(error).toEqual(new Error('Path does not have links'))));
 
 // Test de getLinkStatus
-// test('getLinkStatus', () => getLinkStatus(
-//   'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
-// ).then((data) => expect(data).toEqual(
-//   [
-//     {
-//       href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
-//       text: 'description',
-//       file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
-//       status: 200,
-//       message: 'ok',
-//     },
-//   ],
-// )));
+const arrayGetLinkStatus = [
+  {
+    href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+    text: 'description',
+    file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
+  },
+  {
+    href: 'https://nodejs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+  {
+    href: 'https://developers.google.com/v8/',
+    text: 'motor de JavaScript V8 de Chrome',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+];
+const arrayGetStatus = [
+  {
+    href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+    text: 'description',
+    file: 'C:\\Users\\adria\\Desktop\\Laboratoria\\DEV001-md-links\\prueba\\ejemplo.md',
+    status: 200,
+    message: 'ok',
+  },
+  {
+    href: 'https://nodejs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    status: 200,
+    message: 'ok',
+  },
+  {
+    href: 'https://developers.google.com/v8/',
+    text: 'motor de JavaScript V8 de Chrome',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    status: 200,
+    message: 'ok',
+  },
+];
+
+test('getLinkStatus', () => getLinkStatus(arrayGetLinkStatus).then((data) => expect(data).toEqual(arrayGetStatus)));
+// Test getLinkStatus cuando rechaza
+const arrayGetLinkStatusFail = [
+  {
+    href: 'https://nodasjs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+];
+const errorArraytGetLinkStatus = [
+  {
+    href: 'https://nodasjs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    status: 500,
+    message: 'Fail',
+  },
+];
+test('getLinkStatus', () => getLinkStatus(arrayGetLinkStatusFail).catch((error) => expect(error).toEqual(errorArraytGetLinkStatus)));
+
+// -----------------------------TEST FUNCTIONS CLI-STATS------------------------------------------
+
+const arrayStats = [
+  {
+    href: 'https://raw.githubusercontent.com/programminghistorian/jekyll/gh-pages/es/lecciones/introduccion-a-bash.md',
+    text: 'description',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+];
+const arrayBroken = [
+  {
+    href: 'https://raw.githubusercontent.com/programminghistorian/gh-pages/es/lecciones/introduccion-a-bash.md',
+    text: 'description',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+  },
+];
+// TEST DEL TOTAL DE LINKS
+describe('totalLinks', () => {
+  it('should be a function', () => {
+    expect(typeof totalLinks).toBe('function');
+  });
+  it('should count the total of links', () => {
+    expect(totalLinks(arrayStats)).toBe('1');
+  });
+});
+
+// TEST DE LINKS UNICOS QUE NO SE REPITEN
+describe('uniqueLinks', () => {
+  it('should be a function', () => {
+    expect(typeof uniqueLinks).toBe('function');
+  });
+  it('should count the unique links', () => {
+    expect(uniqueLinks(arrayStats)).toBe('1');
+  });
+});
+
+// TEST DE LINKS ROTOS
+describe('brokenLinks', () => {
+  it('should be a function', () => {
+    expect(typeof brokenLinks).toBe('function');
+  });
+  it('should count the broken links', () => {
+    expect(brokenLinks(arrayBroken)).toBe('0');
+  });
+});
+
+// ----------------------------TEST CON MOCK-------------------------------------------
+
+// afterEach(() => {
+//   // cleaning up the mess left behind the previous test
+//   mockAxios.reset();
+// });
+
+const link = [
+  {
+    href: 'https://nodejs.org/',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    text: 'Node.js',
+  },
+];
+const linkStatus = [
+  {
+    href: 'https://nodejs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    status: 200,
+    message: 'ok',
+  },
+];
+const linkFail = [
+  {
+    href: 'https://nodasjs.org/',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    text: 'Node.js',
+  },
+];
+
+const linkFailStatus = [
+  {
+    href: 'https://nodasjs.org/',
+    text: 'Node.js',
+    file: 'C:/Users/adria/Desktop/Laboratoria/DEV001-md-links/prueba/ejemplo.md',
+    status: 400,
+    message: 'fail',
+  },
+];
+describe('getLinkStatus', () => {
+  it('Debe retornar el href, text, file, estatus y message', () => {
+    axios.get.mockResolvedValue({ status: 200 });
+    return expect(getLinkStatus(link))
+      .resolves
+      .toEqual(linkStatus);
+  });
+});
+it('Devuelve el array mostando el FAIL', () => {
+  // axios.get.mockRejectedValueOnce({});
+  // axios.get.mockRejectedValueOnce({ request: {} });
+  axios.get.mockRejectedValueOnce({ response: { status: 400 } });
+  return expect(getLinkStatus(linkFail))
+    .resolves
+    .toEqual(linkFailStatus);
+});

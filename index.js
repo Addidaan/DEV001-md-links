@@ -5,17 +5,21 @@ const {
 const mdLinks = (path, options) => new Promise((resolve, reject) => {
   if (!pathExists(path)) {
     reject(new Error('Path does not exist'));
+    return;
   }
   const pathAbsolute = turnPathAbsolute(path);
   if (!isExtensionMd(pathAbsolute)) {
     reject(new Error('Path is not an extension file .md'));
+    return;
   }
   getLinks(pathAbsolute).then((arrayLinks) => {
     if (arrayLinks.length === 0) {
       reject(new Error('Path does not have links'));
+      return;
     }
     if (options === { validate: false }) {
       resolve(arrayLinks);
+      return;
     }
     getLinkStatus(arrayLinks).then((response) => {
       resolve(response);

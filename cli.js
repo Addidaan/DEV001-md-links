@@ -10,18 +10,40 @@ const options = {
   stats: process.argv.includes('--stats') || process.argv.includes('--s'),
 };
 // const help = option.includes('--help') || option.includes('--h');
+if (route === undefined) {
+  console.log(
+    `
+      ██     ██ ███████ ██       ██████  ██████  ███    ███ ███████ 
+      ██     ██ ██      ██      ██      ██    ██ ████  ████ ██      
+      ██  █  ██ █████   ██      ██      ██    ██ ██ ████ ██ █████   
+      ██ ███ ██ ██      ██      ██      ██    ██ ██  ██  ██ ██      
+       ███ ███  ███████ ███████  ██████  ██████  ██      ██ ███████ 
+                                                                    
+  `.trap);
+  console.log(
+    `
+       █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+       █                                                                               █
+       █             Please enter the path you want to analyze                         █
+       █    And add:                                                                   █
+       █  --validate : TO VALIDATE ALL LINKS THAT WERE FOUND WORK OR NOT               █
+       █  --stats : FOR BASIC STATISTICS OF THE LINKS                                  █
+       █  --validate --stats: TO OBTAIN STATISTICS THAR REQUIRE THE VALIDATION RESULTS █
+       █                                                                               █
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+  `.gray);
+}
 
 if ((options.validate && options.stats) || (options.stats && options.validate)) {
   mdLinks(route, options)
     .then((arrayLinks) => {
-      console.log(
-        `\n
-                   LINKS VALIDATION AND STATS
-                               `.bgCyan,
+      console.log(`\n                                      
+       LINKS VALIDATION AND STATS     
+                                      `.bgCyan.black,
       );
-      console.log(`\n${'TOTAL LINKS  :'.bgBlue} ${totalLinks(arrayLinks)}`.brightBlue);
-      console.log(`\n${'UNIQUE LINKS :'.bgYellow} ${uniqueLinks(arrayLinks)}`.brightYellow);
-      console.log(`\n${'BROKEN LINKS :'.bgWhite} ${brokenLinks(arrayLinks)}`);
+      console.log(`\n${'TOTAL LINKS  :'.bgMagenta} ${totalLinks(arrayLinks)}`.brightMagenta);
+      console.log(`\n${'UNIQUE LINKS :'.bgGreen} ${uniqueLinks(arrayLinks)}`.brightGreen);
+      console.log(`\n${'BROKEN LINKS :'.bgGrey} ${brokenLinks(arrayLinks)}`.white);
 
       // agregar un foreach para que muestre cada link como en el readme
     })
@@ -31,15 +53,16 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
 } else if (options.validate === true) {
   mdLinks(route, options)
     .then((arrayLinks) => {
-      console.log(`\n
-
-                                          LINKS VALIDATION
-                                          `.bgBlue);
+      console.log(
+        `\n                                      
+       LINKS VALIDATION               
+                                      `.bgCyan.black
+      );
       arrayLinks.forEach((link) => {
         console.log(`
-      ${'HREF    :'.bgCyan} ${link.href.brightCyan} 
+      ${'HREF    :'.bgMagenta} ${link.href.brightMagenta} 
       ${'MESSAGE :'.bgBlue} ${link.message.brightBlue} 
-      ${'STATUS  :'.bgWhite} ${link.status} 
+      ${'STATUS  :'.bgGreen} ${link.status} 
       ${'TEXT    :'.bgYellow} ${link.text.brightYellow}
         `);
       });
@@ -50,11 +73,13 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
 } else if (options.stats && !options.validate) {
   mdLinks(route, options)
     .then((arrayLinks) => {
-      console.log(`\n
-                                          LINKS STATS
-                                          `.bgBlue);
+      console.log(
+        `\n                                      
+       LINKS STATS                    
+                                      `.bgCyan.black
+      );
       console.log(`\n${'TOTAL LINKS  :'.bgBlue} ${totalLinks(arrayLinks)}`.brightBlue);
-      console.log(`\n${'UNIQUE LINKS :'.bgYellow} ${uniqueLinks(arrayLinks)}`.brightYellow);
+      console.log(`\n${'UNIQUE LINKS :'.bgMagenta} ${uniqueLinks(arrayLinks)}`.brightMagenta);
     })
     .catch((error) => {
       console.log(error);
@@ -63,21 +88,21 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
   mdLinks(route, options)
     .then((arrayLinks) => {
       console.log(
-        `\n                                                                                                                        
-                                            THE FOLLOWING LINKS WERE FOUND                                                         
-                                                                     `.bgBlue,
+        `\n                                                     
+       THIS LINKS WERE FOUND                         
+                                                     `.bgCyan.black
       );
       arrayLinks.forEach((link) => {
         console.log(`
-      ${'HREF    :'.bgCyan} ${link.href.brightCyan} 
-      ${'PATH    :'.bgWhite} ${link.file} 
+      ${'HREF    :'.bgMagenta} ${link.href.brightMagenta} 
+      ${'PATH    :'.bgWhite.black} ${link.file} 
       ${'TEXT    :'.bgYellow} ${link.text.brightYellow}`);
       });
       console.log(`     
     Add after your path: 
-    ${'--validate :'.bgBlue} IF YOU WANT TO VALIDATE IF THE LINKS THAT WERE FOUND WORK OR NOT
-    ${'--stats :'.bgBlue} IF YOU WANT TO RECEIVE AN OUTPUT WITH A TEXT CONTAINING BASIC STATISTICS ABOUT THE LINKS
-    ${'--validate --stats :'.bgBlue} IF YOU WANT TO OBTANIN STATISTICS THAT REQUIRE THE VALIDATION RESULTS `.blue);
+    ${'--validate :'.bgBlue.white} IF YOU WANT TO VALIDATE IF THE LINKS THAT WERE FOUND WORK OR NOT
+    ${'--stats :'.bgBlue.white} IF YOU WANT TO RECEIVE AN OUTPUT WITH A TEXT CONTAINING BASIC STATISTICS ABOUT THE LINKS
+    ${'--validate --stats :'.bgBlue.white} IF YOU WANT TO OBTANIN STATISTICS THAT REQUIRE THE VALIDATION RESULTS `.blue);
     }).catch((error) => { console.log(error); });
 }
 
