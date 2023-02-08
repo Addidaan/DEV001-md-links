@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 require('colors');
 // const chalk = require('chalk');
 const { mdLinks } = require('./index');
@@ -19,7 +20,8 @@ if (route === undefined) {
       ██ ███ ██ ██      ██      ██      ██    ██ ██  ██  ██ ██      
        ███ ███  ███████ ███████  ██████  ██████  ██      ██ ███████ 
                                                                     
-  `.trap);
+  `.trap,
+  );
   console.log(
     `
        █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
@@ -31,19 +33,31 @@ if (route === undefined) {
        █  --validate --stats: TO OBTAIN STATISTICS THAR REQUIRE THE VALIDATION RESULTS █
        █                                                                               █
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-  `.gray);
+  `.gray,
+  );
 }
 
-if ((options.validate && options.stats) || (options.stats && options.validate)) {
+if (
+  (options.validate && options.stats)
+  || (options.stats && options.validate)
+) {
   mdLinks(route, options)
     .then((arrayLinks) => {
-      console.log(`\n                                      
+      console.log(
+        `\n                                      
        LINKS VALIDATION AND STATS     
                                       `.bgCyan.black,
       );
-      console.log(`\n${'TOTAL LINKS  :'.bgMagenta} ${totalLinks(arrayLinks)}`.brightMagenta);
-      console.log(`\n${'UNIQUE LINKS :'.bgGreen} ${uniqueLinks(arrayLinks)}`.brightGreen);
-      console.log(`\n${'BROKEN LINKS :'.bgGrey} ${brokenLinks(arrayLinks)}`.white);
+      console.log(
+        `\n${'TOTAL LINKS  :'.bgMagenta} ${totalLinks(arrayLinks)}`
+          .brightMagenta,
+      );
+      console.log(
+        `\n${'UNIQUE LINKS :'.bgGreen} ${uniqueLinks(arrayLinks)}`.brightGreen,
+      );
+      console.log(
+        `\n${'BROKEN LINKS :'.bgGrey} ${brokenLinks(arrayLinks)}`.white,
+      );
 
       // agregar un foreach para que muestre cada link como en el readme
     })
@@ -56,7 +70,7 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
       console.log(
         `\n                                      
        LINKS VALIDATION               
-                                      `.bgCyan.black
+                                      `.bgCyan.black,
       );
       arrayLinks.forEach((link) => {
         console.log(`
@@ -76,10 +90,15 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
       console.log(
         `\n                                      
        LINKS STATS                    
-                                      `.bgCyan.black
+                                      `.bgCyan.black,
       );
-      console.log(`\n${'TOTAL LINKS  :'.bgBlue} ${totalLinks(arrayLinks)}`.brightBlue);
-      console.log(`\n${'UNIQUE LINKS :'.bgMagenta} ${uniqueLinks(arrayLinks)}`.brightMagenta);
+      console.log(
+        `\n${'TOTAL LINKS  :'.bgBlue} ${totalLinks(arrayLinks)}`.brightBlue,
+      );
+      console.log(
+        `\n${'UNIQUE LINKS :'.bgMagenta} ${uniqueLinks(arrayLinks)}`
+          .brightMagenta,
+      );
     })
     .catch((error) => {
       console.log(error);
@@ -90,7 +109,7 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
       console.log(
         `\n                                                     
        THIS LINKS WERE FOUND                         
-                                                     `.bgCyan.black
+                                                     `.bgCyan.black,
       );
       arrayLinks.forEach((link) => {
         console.log(`
@@ -98,12 +117,24 @@ if ((options.validate && options.stats) || (options.stats && options.validate)) 
       ${'PATH    :'.bgWhite.black} ${link.file} 
       ${'TEXT    :'.bgYellow} ${link.text.brightYellow}`);
       });
-      console.log(`     
+      console.log(
+        `     
     Add after your path: 
-    ${'--validate :'.bgBlue.white} IF YOU WANT TO VALIDATE IF THE LINKS THAT WERE FOUND WORK OR NOT
-    ${'--stats :'.bgBlue.white} IF YOU WANT TO RECEIVE AN OUTPUT WITH A TEXT CONTAINING BASIC STATISTICS ABOUT THE LINKS
-    ${'--validate --stats :'.bgBlue.white} IF YOU WANT TO OBTANIN STATISTICS THAT REQUIRE THE VALIDATION RESULTS `.blue);
-    }).catch((error) => { console.log(error); });
+    ${
+  '--validate :'.bgBlue.white
+} IF YOU WANT TO VALIDATE IF THE LINKS THAT WERE FOUND WORK OR NOT
+    ${
+  '--stats :'.bgBlue.white
+} IF YOU WANT TO RECEIVE AN OUTPUT WITH A TEXT CONTAINING BASIC STATISTICS ABOUT THE LINKS
+    ${
+  '--validate --stats :'.bgBlue.white
+} IF YOU WANT TO OBTANIN STATISTICS THAT REQUIRE THE VALIDATION RESULTS `
+          .blue,
+      );
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 // ------------------------------------------------------------
